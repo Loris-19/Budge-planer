@@ -241,7 +241,7 @@
       </div>
       <div class="amount-row">
         <div class="field">
-          <label for="amount">Betrag (€)</label>
+          <label for="amount">Betrag (CHF)</label>
           <input type="number" id="amount" inputmode="decimal" step="0.01" min="0" placeholder="0,00" required>
         </div>
         <div class="field">
@@ -314,7 +314,7 @@
     <h2>Monatsbudget</h2>
     <p>Lege fest, wie viel du diesen Monat maximal ausgeben willst.</p>
     <div class="field">
-      <label for="limitInput">Budget in €</label>
+      <label for="limitInput">Budget in CHF</label>
       <input type="number" id="limitInput" inputmode="decimal" step="0.01" min="0" placeholder="z. B. 800">
     </div>
     <div class="modal-actions">
@@ -337,8 +337,10 @@
   const STORE_KEY = 'budgetplaner_entries_v2';
   const LIMIT_KEY = 'budgetplaner_limit_v1';
 
-  const fmt = (n) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-  const todayISO = () => new Date().toISOString().slice(0, 10);
+  const fmt = (n) => n.toLocaleString('de-CH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' CHF';
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const localISO = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const todayISO = () => localISO(new Date());
   const monthKey = (iso) => iso.slice(0, 7);
   const thisMonthKey = () => monthKey(todayISO());
 
@@ -486,7 +488,7 @@
     const months = [];
     for (let i = 4; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const key = d.toISOString().slice(0, 7);
+      const key = localISO(d).slice(0, 7);
       months.push({ key, date: d });
     }
 
@@ -513,7 +515,7 @@
           <div class="bar in" style="height:${inH}px"></div>
           <div class="bar out" style="height:${outH}px"></div>
         </div>
-        <div class="month-net ${m.net >= 0 ? 'pos' : 'neg'}">${m.net >= 0 ? '+' : '-'}${fmt(Math.abs(m.net)).replace(' €','')}</div>
+        <div class="month-net ${m.net >= 0 ? 'pos' : 'neg'}">${m.net >= 0 ? '+' : '-'}${fmt(Math.abs(m.net)).replace(' CHF','')}</div>
       `;
       card.addEventListener('click', () => openMonthDetail(m.key, m.date));
       row.appendChild(card);
